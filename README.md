@@ -36,8 +36,13 @@ After that:
 
     $ pointer
 
-You'll see a list of basic commands
+You'll see a list of basic commands.
 
+If you did not setup a WebHook (POST) - you can do this:
+
+    $ mina deploy
+
+to deploy your code (you need to push to git first).
 
 ## Known warnings !
 
