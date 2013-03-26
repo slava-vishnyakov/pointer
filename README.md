@@ -1,6 +1,6 @@
 # Pointer
 
-TODO: Write a gem description
+Super-simple deployment! (Yes, I'll write a README)
 
 ## Installation
 
@@ -15,10 +15,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install pointer
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
