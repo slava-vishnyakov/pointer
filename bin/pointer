@@ -37,7 +37,7 @@ if ARGV[0] == 'init'
     IO.write('.gitignore', gitignore)
   end
 
-elsif ARGV[0] == 'deploy'
+elsif ARGV[0] == 'deploy:prepare'
   require './' + config_file
   Pointer::EasyDeploy.new.run! @options
 
@@ -52,7 +52,7 @@ elsif ARGV[0] == 'ssh:log'
 else
   puts "You can run those:"
   puts "  pointer init"
-  puts "  pointer deploy"
+  puts "  pointer deploy:prepare"
   puts "  pointer ssh"
   puts "  pointer ssh:log"
 end

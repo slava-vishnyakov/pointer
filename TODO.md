@@ -32,3 +32,5 @@ session identifier shared
 check for gem pg in Gemfile
 
 backups?
+
+publish without git? local deploy?
