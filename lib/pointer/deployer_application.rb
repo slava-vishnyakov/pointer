@@ -31,7 +31,7 @@ module Pointer
       require 'sinatra'
 
       post '/deploy/#{mtime}' do
-        `cd / && mina -f /home/rails/applications/pointer/#{host}-#{site_port}/deploy.rb deploy`  # < /dev/null > /dev/null && echo OK
+        `cd / && mina -f /home/rails/applications/pointer/#{host}-#{site_port}/deploy.rb deploy < /dev/null`
       end
 
       run Sinatra::Application

@@ -28,5 +28,14 @@ session identifier shared
 check for gem pg in Gemfile
 publish without git? local deploy?
 add info on "Use this as deploy key"
-
+gitignored /shared folder to upload shared files?
+remove application, rename
 backups?
+--use-existing-mina
+check prereqs: postgres use can connect (bug: same host => same user, cannot connect!)
+check prereqs: allowed to connect to host in paranoia mode (known hosts)
+
+nginx.conf: http { server_names_hash_bucket_size 512;
+
+The authenticity of host 'revolver3.slava.io (198.211.118.58)' can't be established.  - не ломает приложение
+CRITICAL: когда меняется deploy.rb или он не закоммичен - нужно загружать его и рестартовать deployer - может даже симлинк на SCM/deploy.rb? double deploy если поменялся? scp upload вместо деплоя?
