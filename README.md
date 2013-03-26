@@ -19,7 +19,7 @@ configures mina for deployment, deploys a simple application that exposes a WebH
 
 ## Status
 
-Ver much *alpha*
+Very much *alpha*
 
 ## Installation
 
