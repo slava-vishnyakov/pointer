@@ -10,7 +10,7 @@ configures mina for deployment, deploys a simple application that exposes a WebH
 
 ## Assumptions (for now)
 
-* You have a clean Ubuntu 12.10 Server (no installations of nginx, rvm or anything, just clean server)
+* You have a clean Ubuntu 12.10 Server (no installations of nginx, rvm or anything, just clean server) - try DigitalOcean.com (5$/month for 512MB/20GB SSD)
 * You have root password to that server
 * You are ok to use RVM, nginx/Passenger (no Apache yet), mina (no Capistrano yet) to Production
 * You need a Postgres database on Production
