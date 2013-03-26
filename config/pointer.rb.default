@@ -1,0 +1,60 @@
+# What is your website name?
+
+host = 'website.com'
+set :host, host
+
+# Where do we deploy this project?
+# Usually same as above, so we use the same variable
+
+set :ssh_host, host
+
+# Yes, we need super-user for now, in future - maybe sudoer will suffice
+# Don't worry, this file (config/pointer.rb) will not be commited to your Git repo
+# this file is needed only once to config the server, so your root password
+# will not be compromised
+
+set :ssh_user, 'root'
+set :ssh_port, 22
+set :password, 'password_of_root'
+
+# Your public and private key that will be used for deployment
+
+set :public_key, "~/.ssh/id_rsa.pub"
+set :private_key, "~/.ssh/id_rsa"
+
+# Less privileged user that you will use to deploy the project
+
+rails_user = 'rails'
+set :rails_user, rails_user
+
+# Configuration of your website, by default - it's same as ssh_host
+
+set :site_host, host
+set :site_port, 80
+set :site_dir, "/home/#{rails_user}/applications/#{host}"
+
+# Do we plan to host your site on BitBucket?
+# BitBucket is the only reputable repo hosting that I know that allows free private repositories
+
+set :git_repo, 'git@bitbucket.org:repo/repo.git'
+
+# Currently only NginxPassenger is supported
+# in future :apache will be supported too
+
+set :web_server, :nginx
+
+# For now we only support mina,
+# in future we will support :capistrano
+
+set :deployer, :mina
+
+# Do you need to setup automatic updates using WebHook,
+# so that when you push the repo - it gets automatically deployed
+
+set :deployer_application, true
+
+# Do we need to install and create a database for you?
+# For now only :postgres is supported
+# The database will be created and attached via database.yml
+
+set :database, :postgres

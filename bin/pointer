@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+require 'pointer'
+
+config_file = 'config/pointer.rb'
+
+@options = {}
+def set(name, value)
+  @options[name] = value
+end
+
+if ARGV[0] == 'init'
+  FileUtils.mkdir('config') unless File.exists?('config')
+
+  if File.exists? (config_file)
+    puts "File '#{config_file}' already exists"
+    exit
+  else
+    FileUtils.cp(File.expand_path(File.dirname(__FILE__)) + '/../config/pointer.rb.default', config_file)
+    puts "Please edit '#{config_file}'"
+  end
+
+  unless File.exists?('.git')
+    puts "Please run it from Git repository"
+    exit
+  end
+
+  unless File.exists?('config.ru')
+    puts "'config.ru' file is required"
+    exit
+  end
+
+  gitignore = File.exists?('.gitignore') ? IO.read('.gitignore') : ''
+
+  unless gitignore.include? '/' + config_file
+    gitignore = gitignore.rstrip + "\n\n# Do not commit this file, it has root password\n" + '/' + config_file
+    IO.write('.gitignore', gitignore)
+  end
+
+elsif ARGV[0] == 'deploy'
+  require './' + config_file
+  Pointer::EasyDeploy.new.run! @options
+
+elsif ARGV[0] == 'ssh'
+  require './' + config_file
+  system("ssh -i #{@options[:private_key]} -p '#{@options[:ssh_port]}' #{@options[:rails_user]}@#{@options[:ssh_host]}")
+
+elsif ARGV[0] == 'ssh:log'
+  require './' + config_file
+  system("ssh -i #{@options[:private_key]} -p '#{@options[:ssh_port]}' #{@options[:rails_user]}@#{@options[:ssh_host]} \"tail --lines=1000 #{@options[:site_dir]}/current/log/production.log\" | less")
+
+else
+  puts "You can run those:"
+  puts "  pointer init"
+  puts "  pointer deploy"
+  puts "  pointer ssh"
+  puts "  pointer ssh:log"
+end
