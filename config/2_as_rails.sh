@@ -265,6 +265,10 @@ echo "Add this to GitHub/BitBucket as WebHook/POST service, so that your code is
 echo "Run, for example:"
 echo "curl -X POST $HOOK_URL"
 echo "-------"
+if [[ $BITBUCKET ]]; then
+    echo "You need to go to BitBucket, then to Your Repo, Gear Icon, Services, POST, Add, URL: insert url above, Save"
+    echo
+fi
 echo
 echo "------ Use this as deployment key ------"
 cat /home/$RAILS_USER/.ssh/id_rsa.pub
