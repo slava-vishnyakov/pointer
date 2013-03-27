@@ -39,3 +39,5 @@ nginx.conf: http { server_names_hash_bucket_size 512;
 
 The authenticity of host 'revolver3.slava.io (198.211.118.58)' can't be established.  - не ломает приложение
 CRITICAL: когда меняется deploy.rb или он не закоммичен - нужно загружать его и рестартовать deployer - может даже симлинк на SCM/deploy.rb? double deploy если поменялся? scp upload вместо деплоя?
+
+PermitRootLogin запретить

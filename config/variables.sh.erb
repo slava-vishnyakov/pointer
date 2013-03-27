@@ -1,0 +1,10 @@
+RAILS_USER=<%= @options[:rails_user].inspect %>
+PUBLIC_KEY='<%= remote_public_key_file %>'
+SITE_PORT=<%= @options[:site_port].inspect %>
+SITE_HOST=<%= @options[:site_host].inspect %>
+SITE_DIR=<%= @options[:site_dir].inspect %>
+REMOTE_REPO=<%= @options[:git_repo].inspect %>
+SSH_PORT=<%= @options[:ssh_port].inspect %>
+<% if bitbucket %>
+BITBUCKET=1
+<% end %>

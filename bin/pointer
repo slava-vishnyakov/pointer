@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'pointer'
+require 'fileutils'
 
 config_file = 'config/pointer.rb'
 

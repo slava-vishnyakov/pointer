@@ -15,12 +15,13 @@ set :ssh_host, host
 
 set :ssh_user, 'root'
 set :ssh_port, 22
-set :password, 'password_of_root'
 
 # Your public and private key that will be used for deployment
 
 set :public_key, "~/.ssh/id_rsa.pub"
 set :private_key, "~/.ssh/id_rsa"
+
+set :git_repo, 'git@bitbucket.org:repo/repo.git'
 
 # Less privileged user that you will use to deploy the project
 
@@ -32,11 +33,6 @@ set :rails_user, rails_user
 set :site_host, host
 set :site_port, 80
 set :site_dir, "/home/#{rails_user}/applications/#{host}"
-
-# Do we plan to host your site on BitBucket?
-# BitBucket is the only reputable repo hosting that I know that allows free private repositories
-
-set :git_repo, 'git@bitbucket.org:repo/repo.git'
 
 # Currently only NginxPassenger is supported
 # in future :apache will be supported too

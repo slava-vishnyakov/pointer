@@ -23,6 +23,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "net-ssh"
   spec.add_dependency "net-scp"
-  spec.add_dependency "colorize"
-  spec.add_dependency "active_support"
+  spec.add_dependency "read-password"
 end
