@@ -1,5 +1,6 @@
 ## Issues
 
+check for gem pg in Gemfile
 vagrant for tests
 touch: cannot touch `tmp/restart.txt': No such file or directory (via deploy)
 automate bitbicket deployment key installation
@@ -25,7 +26,6 @@ local git hosting on server? bad idea, but really easy
 @ssh.exec! -> expect_success
 session identifier shared
 "your website is at"
-check for gem pg in Gemfile
 publish without git? local deploy?
 add info on "Use this as deploy key"
 gitignored /shared folder to upload shared files?
@@ -41,3 +41,5 @@ The authenticity of host 'revolver3.slava.io (198.211.118.58)' can't be establis
 CRITICAL: когда меняется deploy.rb или он не закоммичен - нужно загружать его и рестартовать deployer - может даже симлинк на SCM/deploy.rb? double deploy если поменялся? scp upload вместо деплоя?
 
 PermitRootLogin запретить
+after fail dump the log
+
