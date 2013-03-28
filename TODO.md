@@ -43,3 +43,4 @@ CRITICAL: когда меняется deploy.rb или он не закомми�
 PermitRootLogin запретить
 after fail dump the log
 
+try to use rails user first (instead of root)
