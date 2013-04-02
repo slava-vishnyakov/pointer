@@ -1,5 +1,6 @@
 ## Issues
 
+mina config включить в pointer config
 check for gem pg in Gemfile
 vagrant for tests
 touch: cannot touch `tmp/restart.txt': No such file or directory (via deploy)
