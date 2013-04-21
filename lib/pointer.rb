@@ -28,31 +28,53 @@ module Pointer
       var_file.write(variables.result(binding))
       var_file.rewind
 
-      Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], paranoid: false) do |ssh|
-        puts ssh.scp.upload!(var_file.path, '/tmp/variables.sh')
-        puts ssh.scp.upload!(File.expand_path(@options[:public_key]), remote_public_key_file)
-        puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/1_as_root.sh', '/tmp/1.sh')
-        puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/2_as_rails.sh', '/tmp/2.sh')
-        run_stream('bash -l -e /tmp/1.sh', ssh)
-
-        puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/variables.sh")
-        puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} " + remote_public_key_file)
-        puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/1.sh")
-        puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/2.sh")
+      can_login_as_user = false
+      begin
+        Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), port: @options[:ssh_port], paranoid: false) do |ssh|
+          can_login_as_user = true
+        end
+      rescue
+        # ignored
       end
 
-      Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), paranoid: false) do |ssh|
+      if can_login_as_user
+        Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), port: @options[:ssh_port], paranoid: false) do |ssh|
+          upload_scripts(ssh, var_file)
+        end
+      else
+        Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], paranoid: false) do |ssh|
+          upload_scripts(ssh, var_file, :as_user)
+        end
+      end
 
+      Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), port: @options[:ssh_port], paranoid: false) do |ssh|
         run_stream('bash -l -e /tmp/2.sh', ssh)
         puts "ok"
       end
     ensure
-      Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], paranoid: false) do |ssh|
-        puts ssh.exec!('rm /tmp/variables.sh')
-        puts ssh.exec!('rm ' + remote_public_key_file)
-        puts ssh.exec!('rm /tmp/1.sh')
-        puts ssh.exec!('rm /tmp/2.sh')
+      unless can_login_as_user
+        Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], port: @options[:ssh_port], paranoid: false) do |ssh|
+          puts ssh.exec!('rm /tmp/variables.sh')
+          puts ssh.exec!('rm ' + remote_public_key_file)
+          puts ssh.exec!('rm /tmp/1.sh')
+          puts ssh.exec!('rm /tmp/2.sh')
+        end
       end
+    end
+
+    def upload_scripts(ssh, var_file, as = :as_root)
+      puts ssh.scp.upload!(var_file.path, '/tmp/variables.sh')
+      puts ssh.scp.upload!(File.expand_path(@options[:public_key]), remote_public_key_file)
+      puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/1_as_root.sh', '/tmp/1.sh')
+      puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/2_as_rails.sh', '/tmp/2.sh')
+      run_stream('bash -l -e /tmp/1.sh', ssh)
+
+      puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/variables.sh")
+      puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} " + remote_public_key_file)
+      if as == :as_root
+        puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/1.sh")
+      end
+      puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/2.sh")
     end
 
     def run_stream(cmd, ssh)
