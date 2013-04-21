@@ -1,5 +1,6 @@
 ## Issues
 
+* mina ssh port!
 * проверять что это правильный ключ (deployment key)
 * показывать log при fail
 * mina config включить в pointer config

@@ -28,22 +28,17 @@ module Pointer
       var_file.write(variables.result(binding))
       var_file.rewind
 
-      can_login_as_user = false
-      begin
-        Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), port: @options[:ssh_port], paranoid: false) do |ssh|
-          can_login_as_user = true
-        end
-      rescue
-        # ignored
-      end
+      can_login_as_user = can_login_as_user?()
 
       if can_login_as_user
         Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), port: @options[:ssh_port], paranoid: false) do |ssh|
-          upload_scripts(ssh, var_file)
+          puts "Can login as user already"
+          upload_scripts(ssh, var_file, :as_user)
         end
       else
-        Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], paranoid: false) do |ssh|
-          upload_scripts(ssh, var_file, :as_user)
+        Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], port: @options[:ssh_port], paranoid: false) do |ssh|
+          puts "Logged as root"
+          upload_scripts(ssh, var_file, :as_root)
         end
       end
 
@@ -51,6 +46,9 @@ module Pointer
         run_stream('bash -l -e /tmp/2.sh', ssh)
         puts "ok"
       end
+    rescue Exception => e
+      puts "#{e.message} happened"
+      puts e.backtrace
     ensure
       unless can_login_as_user
         Net::SSH.start(@options[:ssh_host], @options[:ssh_user], password: @options[:ssh_password], port: @options[:ssh_port], paranoid: false) do |ssh|
@@ -62,11 +60,24 @@ module Pointer
       end
     end
 
+    def can_login_as_user?
+      can_login_as_user = false
+      begin
+        Net::SSH.start(@options[:ssh_host], @options[:rails_user], keys: File.expand_path(@options[:private_key]), port: @options[:ssh_port], paranoid: false) do |ssh|
+          can_login_as_user = true
+        end
+      rescue
+        # ignored
+      end
+      can_login_as_user
+    end
+
     def upload_scripts(ssh, var_file, as = :as_root)
-      puts ssh.scp.upload!(var_file.path, '/tmp/variables.sh')
-      puts ssh.scp.upload!(File.expand_path(@options[:public_key]), remote_public_key_file)
-      puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/1_as_root.sh', '/tmp/1.sh')
-      puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/2_as_rails.sh', '/tmp/2.sh')
+      puts "Uploading scripts.."
+      puts ssh.scp.upload!(var_file.path, '/tmp/variables.sh').inspect
+      puts ssh.scp.upload!(File.expand_path(@options[:public_key]), remote_public_key_file).inspect
+      puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/1_as_root.sh', '/tmp/1.sh').inspect
+      puts ssh.scp.upload!(File.dirname(__FILE__) + '/../config/2_as_rails.sh', '/tmp/2.sh').inspect
       run_stream('bash -l -e /tmp/1.sh', ssh)
 
       puts ssh.exec!("chown #{@options[:rails_user]}:#{@options[:rails_user]} /tmp/variables.sh")
