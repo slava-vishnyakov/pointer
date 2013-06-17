@@ -1,5 +1,6 @@
 ## Issues
 
+* define shared folders in config file
 * mina ssh port!
 * проверять что это правильный ключ (deployment key)
 * показывать log при fail
